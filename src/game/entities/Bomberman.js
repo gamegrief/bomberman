@@ -1,7 +1,8 @@
 import { Entity } from "engine/Entity.js";
 import { drawFrameOrigin } from "engine/context.js";
 import * as control from "engine/inputHandler.js";
-import { CollisionTile, collisionMap } from "game/constants/LevelData.js";
+import { CollisionTile } from "game/constants/LevelData.js";
+import { Control } from "game/constants/controls.js";
 import {
 	BombermanStateType,
 	WALK_SPEED,
@@ -30,9 +31,11 @@ export class Bomberman extends Entity {
 	baseSpeedTime = WALK_SPEED;
 	speedMultiplier = 1.2;
 	animation = animations.moveAnimation[this.direction];
-	collisionMap = [...collisionMap];
 
-	constructor(position, time) {
+	bombAmount = 1;
+	availableBombs = this.bombAmount;
+
+	constructor(position, time, stageCollisionMap, onBombPlaced) {
 		super({
 			x: position.x * TILE_SIZE + HALF_TILE_SIZE,
 			y: position.y * TILE_SIZE + HALF_TILE_SIZE,
@@ -50,6 +53,8 @@ export class Bomberman extends Entity {
 			},
 		};
 
+		this.collisionMap = stageCollisionMap;
+		this.onBombPlaced = onBombPlaced;
 		this.changeState(BombermanStateType.IDLE, time);
 	}
 
@@ -179,25 +184,45 @@ export class Bomberman extends Entity {
 		this.animationFrame = 1;
 	};
 
-	handleGeneralState = () => {
+	handleGeneralState = (time) => {
 		const [direction, velocity] = this.getMovement();
+		if (control.isControlPressed(this.id, Control.ACTION))
+			this.handleBombPlacement(time);
 		this.animation = animations.moveAnimation[direction];
 		this.direction = direction;
 		return velocity;
 	};
 
 	handleIdleState = (time) => {
-		const velocity = this.handleGeneralState();
+		const velocity = this.handleGeneralState(time);
 		if (isZero(velocity)) return;
 		this.changeState(BombermanStateType.MOVING, time);
 	};
 
-	handleMovingState = () => {
-		this.velocity = this.handleGeneralState();
+	handleMovingState = (time) => {
+		this.velocity = this.handleGeneralState(time);
 		if (!isZero(this.velocity)) return;
 		this.changeState(BombermanStateType.IDLE, time);
 	};
 
+	handleBombPlacement(time) {
+		if (this.availableBombs <= 0) return;
+		const playerCell = {
+			row: Math.floor(this.position.y / TILE_SIZE),
+			column: Math.floor(this.position.x / TILE_SIZE),
+		};
+
+		//make sure that the current cell is empty
+		if (
+			this.collisionMap[playerCell.row][playerCell.column] !==
+			CollisionTile.EMPTY
+		)
+			return;
+
+		this.availableBombs -= 1;
+
+		this.onBombPlaced(playerCell, time);
+	}
 	//done check
 	updatePosition(time) {
 		this.position.x +=
