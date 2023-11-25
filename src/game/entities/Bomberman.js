@@ -54,8 +54,7 @@ export class Bomberman extends Entity {
 		if (control.isLeft(this.id)) {
 			return [Direction.LEFT, { x: -WALK_SPEED, y: 0 }];
 		} else if (control.isRight(this.id)) {
-			console.log("test");
-			return [Direction.RIGHT, { x: WALK_SPEED, Y: 0 }];
+			return [Direction.RIGHT, { x: WALK_SPEED, y: 0 }];
 		} else if (control.isDown(this.id)) {
 			return [Direction.DOWN, { x: 0, y: WALK_SPEED }];
 		} else if (control.isUp(this.id)) {
