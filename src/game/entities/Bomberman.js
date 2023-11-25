@@ -56,10 +56,9 @@ export class Bomberman extends Entity {
 	changeState(newState, time) {
 		this.currentState = this.state[newState];
 		this.animationFrame = 0;
-		this.animationTimer =
-			time.previous + this.animation[this.animationFrame] * FRAME_TIME;
-
 		this.currentState.init(time);
+		this.animationTimer =
+			time.previous + this.animation[this.animationFrame][1] * FRAME_TIME;
 	}
 
 	//done check
@@ -215,7 +214,11 @@ export class Bomberman extends Entity {
 
 	//done check
 	updateAnimation(time) {
-		if (time.previous < this.animationTimer) return;
+		if (
+			time.previous < this.animationTimer ||
+			this.currentState.type === BombermanStateType.IDLE
+		)
+			return;
 
 		this.animationFrame += 1;
 		if (this.animationFrame >= this.animation.length) this.animationFrame = 0;

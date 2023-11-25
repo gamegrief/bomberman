@@ -2,21 +2,23 @@ import { Entity } from "engine/Entity.js";
 import { drawTile } from "engine/context.js";
 import { tileMap } from "game/constants/LevelData.js";
 import { TILE_SIZE } from "game/constants/game.js";
+import { collisionMap, STAGE_MAP_MAX_SIZE } from "game/constants/LevelData.js";
+
 export class LevelMap extends Entity {
+	tileMap = [...tileMap];
+	collisionMap = [...collisionMap];
+	image = document.querySelector("img#stage");
+	// offscreencanvas allows devs to draw the map off screen and copy it onto the main canvas on the website later on
+	stageImage = new OffscreenCanvas(STAGE_MAP_MAX_SIZE, STAGE_MAP_MAX_SIZE);
 	constructor() {
 		super({ x: 0, y: 0 });
-
-		this.tileMap = [...tileMap];
-		this.image = document.querySelector("img#stage");
-		// offscreencanvas allows devs to draw the map off screen and copy it onto the main canvas on the website later on
-		this.stageImage = new OffscreenCanvas(1024, 1024);
+		this.stageImageContext = this.stageImage.getContext("2d");
 		this.buildStge();
 	}
 
 	updateStageImage(columnIndex, rowIndex, tile) {
-		const context = this.stageImage.getContext("2d");
 		drawTile(
-			context,
+			this.stageImageContext,
 			this.image,
 			tile,
 			columnIndex * TILE_SIZE,
