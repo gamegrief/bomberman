@@ -54,8 +54,8 @@ export const frames = new Map([
 	[
 		"idle-up",
 		[
-			[154, 5, 17, 22],
-			[7, 15],
+			[154, 4, 17, 22],
+			[8, 15],
 		],
 	],
 	[
@@ -106,7 +106,7 @@ export const animations = {
 			["idle-up", 8],
 			["move-up-1", 8],
 			["idle-up", 8],
-			["move-side-2", 8],
+			["move-up-2", 8],
 		],
 		[Direction.DOWN]: [
 			["idle-down", 8],
