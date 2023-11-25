@@ -1,19 +1,31 @@
-import { Scene } from 'engine/Scene.js';
+import { Scene } from "engine/Scene.js";
+import { HALF_TILE_SIZE, STAGE_OFFSET_Y } from "game/constants/game.js";
+import { BattleHud } from "game/entities/BattleHud.js";
+import { Bomberman } from "game/entities/Bomberman.js";
+import { LevelMap } from "game/entities/LevelMap.js";
 
 export class BattleScene extends Scene {
-  constructor() {
-    super();
-  }
+	constructor(time, camera) {
+		super();
 
-  update(time, context, camera) {
-    // Add your main update calls here
-  }
+		this.stage = new LevelMap();
+		this.hud = new BattleHud();
+		this.player = new Bomberman({ x: 2, y: 1 }, time);
+		camera.position = { x: HALF_TILE_SIZE, y: STAGE_OFFSET_Y };
+	}
 
-  draw(context, camera) {
-    // Add your main draw calls here
-  }
+	update(time) {
+		// Add your main update calls here
+		this.player.update(time);
+	}
 
-  cleanUp() {
-    // Can be used to clean
-  }
+	draw(context, camera) {
+		this.stage.draw(context, camera);
+		this.hud.draw(context);
+		this.player.draw(context, camera);
+	}
+
+	cleanUp() {
+		// Can be used to clean
+	}
 }

@@ -4,20 +4,20 @@
  * @param {number} height the canvas height in pixels
  * @returns {CanvasRenderingContext2D}
  */
-export function getContext(parentSelector = 'body', width = 256, height = 256) {
+export function getContext(parentSelector = "body", width = 256, height = 256) {
 	const parentElement = document.querySelector(parentSelector);
 
 	if (!parentElement) {
-		throw new Error('Unable to find parent element');
+		throw new Error("Unable to find parent element");
 	}
 
-	const canvas = document.createElement('canvas');
+	const canvas = document.createElement("canvas");
 	parentElement.appendChild(canvas);
 
-	const context = canvas.getContext('2d');
+	const context = canvas.getContext("2d");
 
 	if (!context) {
-		throw new Error('Unable to find canvas context');
+		throw new Error("Unable to find canvas context");
 	}
 
 	context.canvas.width = width;
@@ -36,20 +36,20 @@ export function getContext(parentSelector = 'body', width = 256, height = 256) {
  * @param {number} y y coord destination potition
  * @param {[number, number]?} scale used for horizontal/vertical flipping (defaults to 1, 1)
  */
-export function drawFrame(
-	context,
-	image,
-	dimensions,
-	x, y,
-	scale = [1, 1],
-) {
+export function drawFrame(context, image, dimensions, x, y, scale = [1, 1]) {
 	const [sourceX, sourceY, sourceWidth, sourceHeight] = dimensions;
 
 	context.scale(scale[0], scale[1]);
 	context.drawImage(
 		image,
-		sourceX, sourceY, sourceWidth, sourceHeight,
-		x * scale[0], y * scale[1], sourceWidth, sourceHeight,
+		sourceX,
+		sourceY,
+		sourceWidth,
+		sourceHeight,
+		x * scale[0],
+		y * scale[1],
+		sourceWidth,
+		sourceHeight
 	);
 	context.setTransform(1, 0, 0, 1, 0, 0);
 }
@@ -65,7 +65,14 @@ export function drawFrame(
  */
 export function drawFrameOrigin(context, image, frame, x, y, scale = [1, 1]) {
 	const [dimensions, [originX, originY]] = frame;
-	drawFrame(context, image, dimensions, x - originX * scale[0], y - originY * scale[1], scale);
+	drawFrame(
+		context,
+		image,
+		dimensions,
+		x - originX * scale[0],
+		y - originY * scale[1],
+		scale
+	);
 }
 
 /**
@@ -84,7 +91,11 @@ export function drawTile(context, image, tile, x, y, tileSize = 16) {
 		image,
 		(tile % noTilesWidth) * tileSize,
 		Math.floor(tile / noTilesWidth) * tileSize,
-		tileSize, tileSize,
-		x, y, tileSize, tileSize,
+		tileSize,
+		tileSize,
+		x,
+		y,
+		tileSize,
+		tileSize
 	);
 }
