@@ -34,6 +34,7 @@ export class Bomberman extends Entity {
 
 	bombAmount = 1;
 	availableBombs = this.bombAmount;
+	lastBombCell = undefined;
 
 	constructor(position, time, stageCollisionMap, onBombPlaced) {
 		super({
@@ -68,6 +69,13 @@ export class Bomberman extends Entity {
 
 	//done check
 	getCollisionTile(tile) {
+		if (
+			this.lastBombCell &&
+			tile.row === this.lastBombCell.row &&
+			tile.column === this.lastBombCell.column
+		)
+			return CollisionTile.EMPTY;
+
 		return this.collisionMap[tile.row][tile.column];
 	}
 
@@ -205,6 +213,10 @@ export class Bomberman extends Entity {
 		this.changeState(BombermanStateType.IDLE, time);
 	};
 
+	handleBombExploded = () => {
+		if (this.availableBombs < this.bombAmount) this.availableBombs += 1;
+	};
+
 	handleBombPlacement(time) {
 		if (this.availableBombs <= 0) return;
 		const playerCell = {
@@ -220,8 +232,8 @@ export class Bomberman extends Entity {
 			return;
 
 		this.availableBombs -= 1;
-
-		this.onBombPlaced(playerCell, time);
+		this.lastBombCell = playerCell;
+		this.onBombPlaced(playerCell, time, this.handleBombExploded);
 	}
 	//done check
 	updatePosition(time) {
@@ -252,11 +264,29 @@ export class Bomberman extends Entity {
 			time.previous + this.animation[this.animationFrame][1] * FRAME_TIME;
 	}
 
+	resetLastBombCell() {
+		if (!this.lastBombCell) return;
+		const playerCell = {
+			row: Math.floor(this.position.y / TILE_SIZE),
+			column: Math.floor(this.position.x / TILE_SIZE),
+		};
+
+		if (
+			(playerCell.row === this.lastBombCell.row &&
+				playerCell.column === this.lastBombCell.column) ||
+			this.collisionMap[this.lastBombCell.row][this.lastBombCell.column] ===
+				CollisionTile.BOMB
+		)
+			return;
+
+		this.lastBombCell = undefined;
+	}
 	//done check
 	update(time) {
 		this.updatePosition(time);
 		this.currentState.update(time);
 		this.updateAnimation(time);
+		this.resetLastBombCell();
 	}
 
 	draw(context, camera) {
