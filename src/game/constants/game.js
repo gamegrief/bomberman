@@ -12,3 +12,5 @@ export const TILE_SIZE = 16;
 // this is for x position
 export const HALF_TILE_SIZE = TILE_SIZE / 2;
 export const STAGE_OFFSET_Y = 24;
+
+export const DEBUG = true;
