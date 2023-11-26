@@ -5,6 +5,7 @@ import { Bomberman } from "game/entities/Bomberman.js";
 import { Stage } from "game/entities/Stage.js";
 import { BlockSystem } from "game/systems/BlockSystem.js";
 import { BombSystem } from "game/systems/BombSystem.js";
+import { PowerupSystem } from "game/systems/PowerupSystem.js";
 
 export class BattleScene extends Scene {
 	constructor(time, camera) {
@@ -12,9 +13,11 @@ export class BattleScene extends Scene {
 
 		this.stage = new Stage();
 		this.hud = new BattleHud();
+		this.powerupSystem = new PowerupSystem();
 		this.blockSystem = new BlockSystem(
 			this.stage.updateMapAt,
-			this.stage.getCollisionTileAt
+			this.stage.getCollisionTileAt,
+			this.powerupSystem.add
 		);
 		this.bombSystem = new BombSystem(
 			this.stage.collisionMap,
@@ -39,6 +42,7 @@ export class BattleScene extends Scene {
 	draw(context, camera) {
 		this.stage.draw(context, camera);
 		this.hud.draw(context);
+		this.powerupSystem.draw(context, camera);
 		this.blockSystem.draw(context, camera);
 		this.bombSystem.draw(context, camera);
 		this.player.draw(context, camera);
