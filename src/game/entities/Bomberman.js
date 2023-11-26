@@ -31,7 +31,7 @@ export class Bomberman extends Entity {
 	baseSpeedTime = WALK_SPEED;
 	speedMultiplier = 1.2;
 	animation = animations.moveAnimation[this.direction];
-
+	bombStrength = 2;
 	bombAmount = 1;
 	availableBombs = this.bombAmount;
 	lastBombCell = undefined;
@@ -233,7 +233,12 @@ export class Bomberman extends Entity {
 
 		this.availableBombs -= 1;
 		this.lastBombCell = playerCell;
-		this.onBombPlaced(playerCell, time, this.handleBombExploded);
+		this.onBombPlaced(
+			playerCell,
+			this.bombStrength,
+			time,
+			this.handleBombExploded
+		);
 	}
 	//done check
 	updatePosition(time) {
