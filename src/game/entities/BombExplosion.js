@@ -23,6 +23,7 @@ export class BombExposion {
 		this.onEnd = onEnd;
 	}
 
+	//done check
 	getBaseFrame(flameCell) {
 		if (!flameCell.isVertical && !flameCell.isLast) {
 			return BASE_HORIZONTAL_FRAME;
@@ -38,6 +39,8 @@ export class BombExposion {
 				: BASE_BOTTOM_LAST_FRAME;
 		}
 	}
+
+	//done check
 	updateAnimation(time) {
 		if (time.previous < this.animationTimer) return;
 
@@ -54,6 +57,7 @@ export class BombExposion {
 		this.updateAnimation(time);
 	}
 
+	//done check
 	draw(context, camera) {
 		// Add your main draw calls here
 		drawTile(

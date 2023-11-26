@@ -8,10 +8,10 @@ export class BombSystem {
 		this.collisionMap = stageCollisionMap;
 	}
 
+	//done check
 	getFlameCellsFor(rowOffset, columnOffset, startCell, length) {
 		const flameCells = [];
 		let cell = { ...startCell };
-		console.log(length);
 		for (let position = 1; position <= length; position++) {
 			cell.row += rowOffset;
 			cell.column += columnOffset;
@@ -68,7 +68,7 @@ export class BombSystem {
 			CollisionTile.EMPTY;
 		for (const flameCell of bombExplosion.flameCells) {
 			this.collisionMap[flameCell.cell.row][flameCell.cell.column] =
-				CollisionTile.FLAME;
+				CollisionTile.EMPTY;
 		}
 		this.bombs.splice(index, 1);
 	};
