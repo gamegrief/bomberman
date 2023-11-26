@@ -1,6 +1,38 @@
 import { TILE_SIZE } from "./game.js";
 
 export const STAGE_MAP_MAX_SIZE = 64 * TILE_SIZE;
+export const MAX_BLOCKS = 50;
+
+export const playerStartCoords = [
+	//areas where player start at the start
+	[1, 2],
+	[2, 2],
+	[1, 3],
+	[1, 13],
+	[1, 14],
+	[2, 14],
+	[10, 2],
+	[11, 2],
+	[11, 3],
+	[10, 14],
+	[11, 13],
+	[11, 14],
+	//areas where palyer start at the center
+	[5, 8],
+	[6, 8],
+	[7, 8],
+	[5, 7],
+	[5, 9],
+	[7, 7],
+	[7, 9],
+];
+
+export const MapTile = {
+	OUTER_WALL: 29,
+	FLOOR: 59,
+	WALL: 30,
+	BLOCK: 103,
+};
 
 export const CollisionTile = {
 	EMPTY: 0,
@@ -8,6 +40,12 @@ export const CollisionTile = {
 	WALL: 20,
 	BOMB: 21,
 	BLOCK: 30,
+};
+
+export const MapToCollisionTileLookup = {
+	[MapTile.FLOOR]: CollisionTile.EMPTY,
+	[MapTile.WALL]: CollisionTile.WALL,
+	[MapTile.BLOCK]: CollisionTile.BLOCK,
 };
 
 export const tileMap = [
