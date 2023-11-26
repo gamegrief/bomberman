@@ -29,7 +29,6 @@ export class BlockSystem {
 			this.getStageCollisionTileAt(cell) !== CollisionTile.EMPTY
 		)
 			return false;
-
 		return true;
 	}
 
@@ -40,7 +39,7 @@ export class BlockSystem {
 				column: 2 + Math.floor(Math.random() * (stageData.tiles[0].length - 4)),
 			};
 
-			if (this.isBlockAllowedAt(cell)) continue;
+			if (!this.isBlockAllowedAt(cell)) continue;
 			this.updateStageMapAt(cell, MapTile.BLOCK);
 
 			this.blocks.push({
