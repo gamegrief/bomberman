@@ -1,26 +1,25 @@
 import { Entity } from "engine/Entity.js";
 import { drawTile } from "engine/context.js";
 import {
+	STAGE_MAP_MAX_SIZE,
 	CollisionTile,
-	MAX_BLOCKS,
-	MapTile,
 	MapToCollisionTileLookup,
-	playerStartCoords,
-	tileMap,
+	stageData,
 } from "game/constants/LevelData.js";
 import { TILE_SIZE } from "game/constants/game.js";
-import { collisionMap, STAGE_MAP_MAX_SIZE } from "game/constants/LevelData.js";
 
 export class Stage extends Entity {
-	tileMap = [...tileMap];
-	collisionMap = [...collisionMap];
+	tileMap = structuredClone(stageData.tiles);
+	collisionMap = stageData.tiles.map((row) =>
+		row.map((tile) => MapToCollisionTileLookup[tile])
+	);
 	image = document.querySelector("img#stage");
 	// offscreencanvas allows devs to draw the map off screen and copy it onto the main canvas on the website later on
 	stageImage = new OffscreenCanvas(STAGE_MAP_MAX_SIZE, STAGE_MAP_MAX_SIZE);
 	constructor() {
 		super({ x: 0, y: 0 });
 		this.stageImageContext = this.stageImage.getContext("2d");
-		this.buildStge();
+		this.buildStageMap();
 	}
 
 	getCollisionTileAt = (cell) => {
@@ -54,39 +53,6 @@ export class Stage extends Entity {
 		}
 	}
 
-	addBlockTileAt(cell) {
-		const isStartZone = playerStartCoords.some(
-			([startRow, startColumn]) =>
-				startRow === cell.row && startColumn === cell.column
-		);
-
-		if (
-			isStartZone ||
-			this.collisionMap[cell.row][cell.column] !== CollisionTile.EMPTY
-		)
-			return false;
-
-		this.updateMapAt(cell, MapTile.BLOCK);
-		return true;
-	}
-
-	addBlocks() {
-		const blocks = [];
-
-		while (blocks.length < MAX_BLOCKS) {
-			const cell = {
-				row: 1 + Math.floor(Math.random() * (this.tileMap.length - 3)),
-				column: 2 + Math.floor(Math.random() * (this.tileMap[0].length - 4)),
-			};
-
-			if (this.addBlockTileAt(cell)) blocks.push(cell);
-		}
-	}
-
-	buildStge() {
-		this.buildStageMap();
-		this.addBlocks();
-	}
 	update = () => undefined;
 
 	draw(context, camera) {
