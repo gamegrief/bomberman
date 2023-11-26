@@ -54,7 +54,11 @@ export class BlockSystem {
 		//the type and amount represents [CollisionTile.POWERUP_FLAME]: 8,
 		for (const [type, amount] of Object.entries(stageData.powerups)) {
 			for (let index = 0; index < amount; index++) {
-				const blockIndex = this.getRandomBlockIndex();
+				let blockIndex = this.getRandomBlockIndex();
+
+				while (this.blocks[blockIndex].powerup) {
+					blockIndex = (blockIndex + 1) % this.blocks.length;
+				}
 				this.blocks[blockIndex].powerup = Number(type);
 			}
 		}

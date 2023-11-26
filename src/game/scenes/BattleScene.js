@@ -13,7 +13,7 @@ export class BattleScene extends Scene {
 
 		this.stage = new Stage();
 		this.hud = new BattleHud();
-		this.powerupSystem = new PowerupSystem();
+		this.powerupSystem = new PowerupSystem(time);
 		this.blockSystem = new BlockSystem(
 			this.stage.updateMapAt,
 			this.stage.getCollisionTileAt,
@@ -34,6 +34,7 @@ export class BattleScene extends Scene {
 
 	update(time) {
 		// Add your main update calls here
+		this.powerupSystem.update(time);
 		this.blockSystem.update(time);
 		this.bombSystem.update(time);
 		this.player.update(time);
