@@ -7,8 +7,9 @@ import { Bomb } from "game/entities/Bomb.js";
 import { BombExposion } from "game/entities/BombExplosion.js";
 export class BombSystem {
 	bombs = [];
-	constructor(stageCollisionMap) {
+	constructor(stageCollisionMap, onBlockDestroyed) {
 		this.collisionMap = stageCollisionMap;
+		this.onBlockDestroyed = onBlockDestroyed;
 	}
 
 	//done check
@@ -35,6 +36,10 @@ export class BombSystem {
 		const endResult = this.collisionMap[endCell.row][endCell.column];
 
 		switch (endResult) {
+			case CollisionTile.BLOCK: {
+				this.onBlockDestroyed(endCell, time);
+				break;
+			}
 			case CollisionTile.BOMB: {
 				const bombToExplode = this.bombs.find(
 					(bomb) =>
@@ -43,6 +48,7 @@ export class BombSystem {
 
 				if (!bombToExplode) return;
 				bombToExplode.fuseTimer = time.previous + BOMB_EXPLODE_DELAY;
+				break;
 			}
 		}
 	}

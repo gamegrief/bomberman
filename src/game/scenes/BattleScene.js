@@ -3,6 +3,7 @@ import { HALF_TILE_SIZE, STAGE_OFFSET_Y } from "game/constants/game.js";
 import { BattleHud } from "game/entities/BattleHud.js";
 import { Bomberman } from "game/entities/Bomberman.js";
 import { LevelMap } from "game/entities/LevelMap.js";
+import { BlockSystem } from "game/systems/BlockSystem.js";
 import { BombSystem } from "game/systems/BombSystem.js";
 
 export class BattleScene extends Scene {
@@ -11,7 +12,11 @@ export class BattleScene extends Scene {
 
 		this.stage = new LevelMap();
 		this.hud = new BattleHud();
-		this.bombSystem = new BombSystem(this.stage.collisionMap);
+		this.blockSystem = new BlockSystem(this.stage);
+		this.bombSystem = new BombSystem(
+			this.stage.collisionMap,
+			this.blockSystem.add
+		);
 		this.player = new Bomberman(
 			{ x: 2, y: 1 },
 			time,
@@ -23,6 +28,7 @@ export class BattleScene extends Scene {
 
 	update(time) {
 		// Add your main update calls here
+		this.blockSystem.update(time);
 		this.bombSystem.update(time);
 		this.player.update(time);
 	}
@@ -30,6 +36,7 @@ export class BattleScene extends Scene {
 	draw(context, camera) {
 		this.stage.draw(context, camera);
 		this.hud.draw(context);
+		this.blockSystem.draw(context, camera);
 		this.bombSystem.draw(context, camera);
 		this.player.draw(context, camera);
 	}
