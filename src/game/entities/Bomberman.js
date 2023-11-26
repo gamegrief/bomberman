@@ -52,8 +52,14 @@ export class Bomberman extends Entity {
 				init: this.handleMovingInit,
 				update: this.handleMovingState,
 			},
+			[BombermanStateType.DEATH]: {
+				type: BombermanStateType.DEATH,
+				init: this.handleDeathInit,
+				update: this.handleDeathState,
+			},
 		};
 
+		this.startPosition = { ...this.position };
 		this.collisionMap = stageCollisionMap;
 		this.onBombPlaced = onBombPlaced;
 		this.changeState(BombermanStateType.IDLE, time);
@@ -65,6 +71,14 @@ export class Bomberman extends Entity {
 		this.currentState.init(time);
 		this.animationTimer =
 			time.previous + this.animation[this.animationFrame][1] * FRAME_TIME;
+	}
+
+	reset(time) {
+		this.animationFrame = 0;
+		this.direction = Direction.DOWN;
+		this.position = { ...this.startPosition };
+		this.velocity = { x: 0, y: 0 };
+		this.changeState(BombermanStateType.IDLE, time);
 	}
 
 	//done check
@@ -192,6 +206,11 @@ export class Bomberman extends Entity {
 		this.animationFrame = 1;
 	};
 
+	handleDeathInit = () => {
+		this.velocity = { x: 0, y: 0 };
+		this.animation = animations.deathAnimation;
+	};
+
 	handleGeneralState = (time) => {
 		const [direction, velocity] = this.getMovement();
 		if (control.isControlPressed(this.id, Control.ACTION))
@@ -211,6 +230,11 @@ export class Bomberman extends Entity {
 		this.velocity = this.handleGeneralState(time);
 		if (!isZero(this.velocity)) return;
 		this.changeState(BombermanStateType.IDLE, time);
+	};
+
+	handleDeathState = (time) => {
+		if (this.animationFrame >= animations.deathAnimation.length - 1)
+			this.reset(time);
 	};
 
 	handleBombExploded = () => {
@@ -269,12 +293,8 @@ export class Bomberman extends Entity {
 			time.previous + this.animation[this.animationFrame][1] * FRAME_TIME;
 	}
 
-	resetLastBombCell() {
+	resetLastBombCell(playerCell) {
 		if (!this.lastBombCell) return;
-		const playerCell = {
-			row: Math.floor(this.position.y / TILE_SIZE),
-			column: Math.floor(this.position.x / TILE_SIZE),
-		};
 
 		if (
 			(playerCell.row === this.lastBombCell.row &&
@@ -286,12 +306,32 @@ export class Bomberman extends Entity {
 
 		this.lastBombCell = undefined;
 	}
+
+	checkFlameTileCollision(playerCell, time) {
+		if (
+			this.getCollisionTile(playerCell) !== CollisionTile.FLAME ||
+			this.currentState.type === BombermanStateType.DEATH
+		)
+			return;
+
+		this.changeState(BombermanStateType.DEATH, time);
+	}
+
+	updateCellUnderneath(time) {
+		const playerCell = {
+			row: Math.floor(this.position.y / TILE_SIZE),
+			column: Math.floor(this.position.x / TILE_SIZE),
+		};
+		this.resetLastBombCell(playerCell);
+		this.checkFlameTileCollision(playerCell, time);
+	}
 	//done check
 	update(time) {
 		this.updatePosition(time);
 		this.currentState.update(time);
 		this.updateAnimation(time);
-		this.resetLastBombCell();
+		this.updateCellUnderneath(time);
+		// this.resetLastBombCell();
 	}
 
 	draw(context, camera) {

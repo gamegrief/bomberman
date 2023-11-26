@@ -54,7 +54,9 @@ export class BombSystem {
 			time,
 			this.remove
 		);
+		//place current position as flame
 		this.collisionMap[bomb.cell.row][bomb.cell.column] = CollisionTile.FLAME;
+		//place radius as flame
 		for (const flameCell of flameCells) {
 			this.collisionMap[flameCell.cell.row][flameCell.cell.column] =
 				CollisionTile.FLAME;
