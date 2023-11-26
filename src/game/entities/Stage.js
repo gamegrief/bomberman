@@ -11,7 +11,7 @@ import {
 import { TILE_SIZE } from "game/constants/game.js";
 import { collisionMap, STAGE_MAP_MAX_SIZE } from "game/constants/LevelData.js";
 
-export class LevelMap extends Entity {
+export class Stage extends Entity {
 	tileMap = [...tileMap];
 	collisionMap = [...collisionMap];
 	image = document.querySelector("img#stage");
@@ -23,7 +23,11 @@ export class LevelMap extends Entity {
 		this.buildStge();
 	}
 
-	updateMapAt(cell, tile) {
+	getCollisionTileAt = (cell) => {
+		return this.collisionMap[cell.row][cell.column] ?? CollisionTile.EMPTY;
+	};
+
+	updateMapAt = (cell, tile) => {
 		this.tileMap[cell.row][cell.column] = tile;
 		this.collisionMap[cell.row][cell.column] = MapToCollisionTileLookup[tile];
 
@@ -35,7 +39,7 @@ export class LevelMap extends Entity {
 			cell.row * TILE_SIZE,
 			TILE_SIZE
 		);
-	}
+	};
 
 	buildStageMap() {
 		for (let rowIndex = 0; rowIndex < this.tileMap.length; rowIndex++) {
