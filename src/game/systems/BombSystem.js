@@ -1,5 +1,8 @@
 import { CollisionTile } from "game/constants/LevelData.js";
-import { FlameDirectionLookup } from "game/constants/bombs.js";
+import {
+	FlameDirectionLookup,
+	BOMB_EXPLODE_DELAY,
+} from "game/constants/bombs.js";
 import { Bomb } from "game/entities/Bomb.js";
 import { BombExposion } from "game/entities/BombExplosion.js";
 export class BombSystem {
@@ -25,19 +28,37 @@ export class BombSystem {
 				isLast: position === length,
 			});
 		}
-		return flameCells;
+		return { cells: flameCells, endCell: cell };
+	}
+
+	handleEndResult(endCell, time) {
+		const endResult = this.collisionMap[endCell.row][endCell.column];
+
+		switch (endResult) {
+			case CollisionTile.BOMB: {
+				const bombToExplode = this.bombs.find(
+					(bomb) =>
+						endCell.row === bomb.cell.row && endCell.column === bomb.cell.column
+				);
+
+				if (!bombToExplode) return;
+				bombToExplode.fuseTimer = time.previous + BOMB_EXPLODE_DELAY;
+			}
+		}
 	}
 
 	getFlameCells = (startCell, length, time) => {
 		const flameCells = [];
 
 		for (const [rowOffset, columnOffset] of FlameDirectionLookup) {
-			const cells = this.getFlameCellsFor(
+			const { cells, endCell } = this.getFlameCellsFor(
 				rowOffset,
 				columnOffset,
 				startCell,
 				length
 			);
+			this.handleEndResult(endCell, time);
+
 			if (cells.length > 0) flameCells.push(...cells);
 		}
 		return flameCells;
