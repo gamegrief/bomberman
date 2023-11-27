@@ -4,10 +4,11 @@ import * as control from "engine/inputHandler.js";
 import { CollisionTile } from "game/constants/LevelData.js";
 import { Control } from "game/constants/controls.js";
 import {
+	BombermanPlayerData,
 	BombermanStateType,
 	WALK_SPEED,
 	animations,
-	frames,
+	getBombermanFrames,
 } from "game/constants/bomberman.js";
 import {
 	CounterDirectionsLookup,
@@ -36,10 +37,10 @@ export class Bomberman extends Entity {
 	availableBombs = this.bombAmount;
 	lastBombCell = undefined;
 
-	constructor(position, time, getStageCollisionTileAt, onBombPlaced) {
+	constructor(id, time, getStageCollisionTileAt, onBombPlaced) {
 		super({
-			x: position.x * TILE_SIZE + HALF_TILE_SIZE,
-			y: position.y * TILE_SIZE + HALF_TILE_SIZE,
+			x: BombermanPlayerData[id].column * TILE_SIZE + HALF_TILE_SIZE,
+			y: BombermanPlayerData[id].row * TILE_SIZE + HALF_TILE_SIZE,
 		});
 		this.state = {
 			[BombermanStateType.IDLE]: {
@@ -58,7 +59,10 @@ export class Bomberman extends Entity {
 				update: this.handleDeathState,
 			},
 		};
-
+		this.id = id;
+		this.color = BombermanPlayerData[id].color;
+		this.frames = getBombermanFrames(this.color);
+		console.log(this.frames);
 		this.startPosition = { ...this.position };
 		this.getStageCollisionTileAt = getStageCollisionTileAt;
 		this.onBombPlaced = onBombPlaced;
@@ -358,7 +362,7 @@ export class Bomberman extends Entity {
 	draw(context, camera) {
 		// Add your main draw calls here
 		const [frameKey] = this.animation[this.animationFrame];
-		const frame = frames.get(frameKey);
+		const frame = this.frames.get(frameKey);
 
 		drawFrameOrigin(
 			context,
