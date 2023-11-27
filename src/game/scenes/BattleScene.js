@@ -13,11 +13,11 @@ import { PowerupSystem } from "game/systems/PowerupSystem.js";
 
 export class BattleScene extends Scene {
 	players = [];
-	constructor(time, camera) {
+	constructor(time, camera, state) {
 		super();
-
+		this.state = state;
 		this.stage = new Stage();
-		this.hud = new BattleHud();
+		this.hud = new BattleHud(time, this.state);
 		this.powerupSystem = new PowerupSystem(time, this.players);
 		this.blockSystem = new BlockSystem(
 			this.stage.updateMapAt,
@@ -48,6 +48,7 @@ export class BattleScene extends Scene {
 
 	update(time) {
 		// Add your main update calls here
+		this.hud.update(time);
 		this.powerupSystem.update(time);
 		this.blockSystem.update(time);
 		this.bombSystem.update(time);

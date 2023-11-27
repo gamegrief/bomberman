@@ -62,7 +62,6 @@ export class Bomberman extends Entity {
 		this.id = id;
 		this.color = BombermanPlayerData[id].color;
 		this.frames = getBombermanFrames(this.color);
-		console.log(this.frames);
 		this.startPosition = { ...this.position };
 		this.getStageCollisionTileAt = getStageCollisionTileAt;
 		this.onBombPlaced = onBombPlaced;
