@@ -25,19 +25,17 @@ export class BombExposion {
 
 	//done check
 	getBaseFrame(flameCell) {
-		if (!flameCell.isVertical && !flameCell.isLast) {
-			return BASE_HORIZONTAL_FRAME;
-		} else if (flameCell.isVertical && !flameCell.isLast) {
-			return BASE_VERTICAL_FRAME;
-		} else if (!flameCell.isVertical && flameCell.isLast) {
-			return flameCell.cell.column < this.cell.column
-				? BASE_LEFT_LAST_FRAME
-				: BASE_RIGHT_LAST_FRAME;
-		} else if (flameCell.isVertical && flameCell.isLast) {
+		if (!flameCell.isLast) {
+			return flameCell.isVertical ? BASE_VERTICAL_FRAME : BASE_HORIZONTAL_FRAME;
+		} else if (flameCell.isVertlca) {
 			return flameCell.cell.row < this.cell.row
 				? BASE_TOP_LAST_FRAME
 				: BASE_BOTTOM_LAST_FRAME;
 		}
+
+		return flameCell.cell.column < this.cell.column
+			? BASE_LEFT_LAST_FRAME
+			: BASE_RIGHT_LAST_FRAME;
 	}
 
 	//done check

@@ -16,4 +16,4 @@ export const STAGE_OFFSET_Y = 24;
 export const NO_PLAYERS = 5;
 export const MAX_WINS = 5;
 
-export const DEBUG = true;
+export const DEBUG = false;

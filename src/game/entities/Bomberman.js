@@ -30,7 +30,7 @@ export class Bomberman extends Entity {
 	id = 0;
 	direction = Direction.DOWN;
 	baseSpeedTime = WALK_SPEED;
-	speedMultiplier = 1.2;
+	speedMultiplier = 1.4;
 	animation = animations.moveAnimation[this.direction];
 	bombStrength = 2;
 	bombAmount = 1;
@@ -380,6 +380,15 @@ export class Bomberman extends Entity {
 			],
 			"#FFFF00"
 		);
+
+		const collisionBox = this.getCollisionRect();
+		drawBox(context, camera, [
+			collisionBox.x,
+			collisionBox.y,
+			collisionBox.width,
+			collisionBox.height,
+			"#FF0000",
+		]);
 		drawCross(
 			context,
 			camera,
