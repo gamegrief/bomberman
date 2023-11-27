@@ -32,7 +32,7 @@ export class Bomberman extends Entity {
 	speedMultiplier = 1.2;
 	animation = animations.moveAnimation[this.direction];
 	bombStrength = 2;
-	bombAmount = 5;
+	bombAmount = 1;
 	availableBombs = this.bombAmount;
 	lastBombCell = undefined;
 
@@ -84,6 +84,13 @@ export class Bomberman extends Entity {
 		this.resetVelocity();
 		this.changeState(BombermanStateType.IDLE, time);
 	}
+
+	getCollisionRect = () => ({
+		x: this.position.x - HALF_TILE_SIZE / 2,
+		y: this.position.y - HALF_TILE_SIZE / 2,
+		width: HALF_TILE_SIZE,
+		height: HALF_TILE_SIZE,
+	});
 
 	//done check
 	getCollisionTile(cell) {
