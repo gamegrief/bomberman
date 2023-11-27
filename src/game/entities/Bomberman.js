@@ -37,7 +37,7 @@ export class Bomberman extends Entity {
 	availableBombs = this.bombAmount;
 	lastBombCell = undefined;
 
-	constructor(id, time, getStageCollisionTileAt, onBombPlaced) {
+	constructor(id, time, getStageCollisionTileAt, onBombPlaced, onEnd) {
 		super({
 			x: BombermanPlayerData[id].column * TILE_SIZE + HALF_TILE_SIZE,
 			y: BombermanPlayerData[id].row * TILE_SIZE + HALF_TILE_SIZE,
@@ -65,6 +65,7 @@ export class Bomberman extends Entity {
 		this.startPosition = { ...this.position };
 		this.getStageCollisionTileAt = getStageCollisionTileAt;
 		this.onBombPlaced = onBombPlaced;
+		this.onEnd = onEnd;
 		this.changeState(BombermanStateType.IDLE, time);
 	}
 
@@ -80,13 +81,6 @@ export class Bomberman extends Entity {
 		this.velocity.x = 0;
 		this.velocity.y = 0;
 	};
-	reset(time) {
-		this.animationFrame = 0;
-		this.direction = Direction.DOWN;
-		this.position = { ...this.startPosition };
-		this.resetVelocity();
-		this.changeState(BombermanStateType.IDLE, time);
-	}
 
 	getCollisionRect = () => ({
 		x: this.position.x - HALF_TILE_SIZE / 2,
@@ -260,9 +254,9 @@ export class Bomberman extends Entity {
 		this.changeState(BombermanStateType.IDLE, time);
 	};
 
-	handleDeathState = (time) => {
-		if (this.animationFrame >= animations.deathAnimation.length - 1)
-			this.reset(time);
+	handleDeathState = () => {
+		if (animations.deathAnimation[this.animationFrame][1] !== -1) return;
+		this.onEnd(this.id);
 	};
 
 	handleBombExploded = () => {

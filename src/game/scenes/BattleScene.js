@@ -35,13 +35,21 @@ export class BattleScene extends Scene {
 		camera.position = { x: HALF_TILE_SIZE, y: STAGE_OFFSET_Y };
 	}
 
+	removePlayer = (id) => {
+		const index = this.players.findIndex((player) => player.id === id);
+
+		if (index < 0) return;
+		this.players.splice(index, 1);
+	};
+
 	addPlayer(id, time) {
 		this.players.push(
 			new Bomberman(
 				id,
 				time,
 				this.stage.getCollisionTileAt,
-				this.bombSystem.add
+				this.bombSystem.add,
+				this.removePlayer
 			)
 		);
 	}
