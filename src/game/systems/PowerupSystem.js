@@ -49,6 +49,7 @@ export class PowerupSystem {
 				)
 					continue;
 
+				player.applyPowerup(powerup.type);
 				this.remove(powerup);
 			}
 		}

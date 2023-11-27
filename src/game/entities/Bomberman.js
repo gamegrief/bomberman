@@ -154,6 +154,20 @@ export class Bomberman extends Entity {
 		}
 	}
 
+	applyPowerup(type) {
+		switch (type) {
+			case CollisionTile.POWERUP_FLAME:
+				this.bombStrength += 1;
+				break;
+			case CollisionTile.POWERUP_BOMB:
+				this.bombAmount += 1;
+				this.availableBombs += 1;
+				break;
+			case CollisionTile.POWERUP_SPEED:
+				this.speedMultiplier += 0.4;
+				break;
+		}
+	}
 	//done check
 	shouldBlockMovement(tileCoords) {
 		const tileCoordsMatch =
