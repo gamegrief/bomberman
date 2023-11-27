@@ -16,6 +16,21 @@ export class BombermanGame extends Game {
 
 	constructor() {
 		super("body", SCREEN_WIDTH, SCREEN_HEIGHT);
-		this.scene = new BattleScene(this.frameTime, this.camera, this.gameState);
+		this.scene = new BattleScene(
+			this.frameTime,
+			this.camera,
+			this.gameState,
+			this.resetGame
+		);
 	}
+
+	resetGame = (winnerId) => {
+		if (winnerId > -1) this.gameState.wins[winnerId] += 1;
+		this.scene = new BattleScene(
+			this.frameTime,
+			this.camera,
+			this.gameState,
+			this.resetGame
+		);
+	};
 }

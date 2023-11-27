@@ -1,4 +1,5 @@
 import { Scene } from "engine/Scene.js";
+import { BombermanStateType } from "game/constants/bomberman.js";
 import {
 	HALF_TILE_SIZE,
 	STAGE_OFFSET_Y,
@@ -13,9 +14,10 @@ import { PowerupSystem } from "game/systems/PowerupSystem.js";
 
 export class BattleScene extends Scene {
 	players = [];
-	constructor(time, camera, state) {
+	constructor(time, camera, state, onEnd) {
 		super();
 		this.state = state;
+		this.onEnd = onEnd;
 		this.stage = new Stage();
 		this.hud = new BattleHud(time, this.state);
 		this.powerupSystem = new PowerupSystem(time, this.players);
@@ -54,6 +56,15 @@ export class BattleScene extends Scene {
 		);
 	}
 
+	checkEndGame() {
+		if (this.players.length > 1) return;
+
+		const isLastPlayerAlive =
+			this.players.length > 0 &&
+			this.players[0].currentState.type !== BombermanStateType.DEATH;
+
+		this.onEnd(isLastPlayerAlive ? this.players[0].id : -1);
+	}
 	update(time) {
 		// Add your main update calls here
 		this.hud.update(time);
@@ -63,6 +74,7 @@ export class BattleScene extends Scene {
 		for (const player of this.players) {
 			player.update(time);
 		}
+		this.checkEndGame();
 	}
 
 	draw(context, camera) {
